@@ -1,0 +1,94 @@
+# version: '3.8'
+
+services:
+  user-service:
+    build: ./user-service
+    ports:
+      - "8001:8001"
+    environment:
+      - DB_URI=mongodb://user-db:27017/userdb
+    depends_on:
+      - user-db
+
+  post-service:
+    build: ./post-service
+    ports:
+      - "8002:8002"
+    environment:
+      - DB_URI=mongodb://post-db:27017/postdb
+    depends_on:
+      - post-db
+
+  notification-service:
+    build: ./notification-service
+    ports:
+      - "8003:8003"
+    environment:
+      - DB_URI=mongodb://notif-db:27017/notifdb
+    depends_on:
+      - notif-db
+
+  # Separate MongoDB containers for each service
+  user-db:
+    image: mongo:latest
+    container_name: user-db
+    ports:
+      - "27017:27017"
+    volumes:
+      - user-data:/data/db
+
+  post-db:
+    image: mongo:latest
+    container_name: post-db
+    ports:
+      - "27018:27017"
+    volumes:
+      - post-data:/data/db
+
+  notif-db:
+    image: mongo:latest
+    container_name: notif-db
+    ports:
+      - "27019:27017"
+    volumes:
+      - notif-data:/data/db
+
+  
+  gateway:
+    build:
+      context: ./gateway
+    container_name: gateway
+    ports:
+      - "80:80"
+    depends_on:
+      - user-service
+      - post-service
+      - notification-service
+
+  
+  # mongo:
+  #   image: mongo:4.4
+  #   container_name: mongo
+  #   ports:
+  #     - "27017:27017"
+  #   volumes:
+  #     - mongo-data:/data/db
+
+  minio:
+    image: minio/minio
+    container_name: minio
+    ports:
+      - "9000:9000"
+    environment:
+      MINIO_ACCESS_KEY: minioadmin
+      MINIO_SECRET_KEY: minioadmin
+    command: server /data
+    volumes:
+      - minio-data:/data
+
+volumes:
+  # mongo-data:
+  minio-data:
+  user-data:
+  post-data:
+  notif-data:
