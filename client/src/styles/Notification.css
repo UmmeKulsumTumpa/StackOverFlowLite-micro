@@ -1,0 +1,11 @@
+.notification-container {
+    padding: 20px;
+  }
+  
+  .notification {
+    margin: 10px 0;
+    padding: 10px;
+    border: 1px solid #f1f1f1;
+    border-radius: 5px;
+  }
+  
