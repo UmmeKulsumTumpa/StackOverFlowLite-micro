@@ -23,6 +23,9 @@ const postSchema = new mongoose.Schema({
     file_type: {
         type: String,
     },
+    code_snippet_url: {
+        type: String,
+    },
 }, { timestamps: true });
 
 const Post = mongoose.model('Post', postSchema);

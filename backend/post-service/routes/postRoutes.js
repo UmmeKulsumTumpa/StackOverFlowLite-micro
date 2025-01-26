@@ -6,12 +6,12 @@ const verifyToken = require("../middleware/authMiddleware");
 const router = express.Router();
 
 // Get all posts
-router.get("/", verifyToken, getPosts);
+router.get("/", getPosts);
 
 // Create a new post
 router.post("/", verifyToken, uploadMiddleware, createPost);
 
 // Get posts by a specific user
-router.get("/user/:userId", verifyToken, getUserPosts);
+router.get("/:userId", verifyToken, getUserPosts);
 
 module.exports = router;

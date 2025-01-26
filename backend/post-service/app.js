@@ -14,7 +14,7 @@ app.use(express.json());
 // Routes
 app.use('/api/posts', postRoutes);
 
-mongoose.connect(process.env.DB, { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(process.env.DB)
     .then(() => console.log('Post Service: Connected to MongoDB'))
     .catch(err => console.error(err));
 

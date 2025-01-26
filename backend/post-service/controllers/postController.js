@@ -6,21 +6,19 @@ const path = require("path");
 const sanitize = require("sanitize-filename");
 const moment = require("moment");
 
-// Fetch all posts or filter by user ID
+// Fetch all posts or exclude posts by the logged-in user
 exports.getPosts = async (req, res) => {
     try {
-        const { userId } = req.query; // Optional userId for filtering
-        let posts;
+        const { excludeUserId } = req.query; // Optional query parameter
+        let filter = {};
 
-        if (userId) {
-            // Exclude posts created by the requesting user
-            posts = await Post.find({ author_id: { $ne: userId } }).sort({
-                createdAt: -1,
-            });
-        } else {
-            // Fetch all posts
-            posts = await Post.find().sort({ createdAt: -1 });
+        // If excludeUserId is provided, exclude posts by that user
+        if (excludeUserId) {
+            filter.author_id = { $ne: excludeUserId };
         }
+
+        // Fetch posts based on the filter
+        const posts = await Post.find(filter).sort({ createdAt: -1 });
 
         res.status(200).json({ success: true, posts });
     } catch (err) {
@@ -32,7 +30,7 @@ exports.getPosts = async (req, res) => {
 // Create a new post
 exports.createPost = async (req, res) => {
     try {
-        const { title, content, codeSnippet } = req.body;
+        const { title, content, fileType, codeSnippet } = req.body;
         const userId = req.user?.id; // Ensure the user ID is attached to the request
 
         // Validate request
@@ -44,6 +42,7 @@ exports.createPost = async (req, res) => {
 
         let fileUrl = null;
         let fileName = null;
+        let codeSnippetUrl = null;
 
         // If a file is uploaded, handle it
         if (req.file) {
@@ -66,6 +65,23 @@ exports.createPost = async (req, res) => {
             fileName = originalName;
         }
 
+        // Handling code snippet if provided
+        if (codeSnippet) {
+            const snippetFileName = `${uuidv4()}.txt`; // Save code snippets as .txt files
+
+            // Create a buffer from the code snippet text
+            const buffer = Buffer.from(codeSnippet, 'utf-8');
+            const metaData = {
+                'Content-Type': 'text/plain',
+            };
+
+            // Upload the code snippet buffer to MinIO
+            await minioClient.putObject(process.env.MINIO_BUCKET_NAME, snippetFileName, buffer, metaData);
+
+            const protocol = process.env.MINIO_USE_SSL === 'true' ? 'https' : 'http';
+            codeSnippetUrl = `${protocol}://${process.env.MINIO_ENDPOINT}:${process.env.MINIO_PORT}/${process.env.MINIO_BUCKET_NAME}/${snippetFileName}`;
+        }
+
         // Create a new post object
         const newPost = new Post({
             title: title || "Untitled",
@@ -73,6 +89,8 @@ exports.createPost = async (req, res) => {
             author_id: userId,
             file_url: fileUrl,
             file_name: fileName,
+            file_type: fileType,
+            code_snippet_url: codeSnippetUrl,
         });
 
         console.log("New Post:", newPost);
@@ -116,10 +134,6 @@ exports.getUserPosts = async (req, res) => {
         const userPosts = await Post.find({ author_id: userId }).sort({
             createdAt: -1,
         });
-
-        if (!userPosts.length) {
-            return res.status(404).json({ success: false, message: "No posts found for this user." });
-        }
 
         res.status(200).json({ success: true, posts: userPosts });
     } catch (err) {
