@@ -1,13 +1,14 @@
-import React, { useState, useContext } from 'react';
-import { AuthContext } from './AuthContext'; 
-import { useNavigate } from 'react-router-dom'; 
+import React, { useState, useContext } from "react";
+import { AuthContext } from "./AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const CreatePost = () => {
-    const { user, token, logout } = useContext(AuthContext); 
-    const [title, setTitle] = useState('');
-    const [content, setContent] = useState('');
+    const { user, token, logout } = useContext(AuthContext);
+    const [title, setTitle] = useState("");
+    const [content, setContent] = useState("");
     const [file, setFile] = useState(null);
-    const [codeSnippet, setCodeSnippet] = useState('');
+    const [codeSnippet, setCodeSnippet] = useState("");
+    const [language, setLanguage] = useState("");
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);
     const navigate = useNavigate();
@@ -17,79 +18,87 @@ const CreatePost = () => {
         setFile(uploadedFile);
 
         if (uploadedFile) {
-            const reader = new FileReader();
-            reader.onload = (event) => {
-                setCodeSnippet(event.target.result);
-            };
-            reader.onerror = () => {
-                setError('Error reading file.');
-            };
-            reader.readAsText(uploadedFile);
+            // Extract the file extension from the last dot
+            const extension = uploadedFile.name.substring(uploadedFile.name.lastIndexOf('.') + 1).toLowerCase();
+            setLanguage(extension);
         }
     };
 
     const handleCreatePost = async () => {
         if (!title && !content && !file && !codeSnippet) {
-            setError('Title, content, or a file/code snippet is required.');
+            setError("Title, content, or a file/code snippet is required.");
+            return;
+        }
+
+        if (codeSnippet && !language) {
+            setError("Please select a language for the code snippet.");
             return;
         }
 
         if (!user || !user._id) {
-            setError('User is not authenticated.');
+            setError("User is not authenticated.");
             return;
         }
 
         const formData = new FormData();
-        formData.append('title', title || 'Untitled');
-        formData.append('content', content);
+        formData.append("title", title || "Untitled");
+        formData.append("content", content);
+        formData.append("fileType", language);
+
         if (file) {
-            formData.append('file', file);
-        } else if (codeSnippet) {
-            formData.append('codeSnippet', codeSnippet);
+            formData.append("file", file);
+        }
+        if (codeSnippet) {
+            formData.append("codeSnippet", codeSnippet);
         }
 
         try {
-            const response = await fetch('http://localhost:8002/api/posts', {
-                method: 'POST',
+            const response = await fetch("http://localhost:8002/api/posts", {
+                method: "POST",
                 headers: {
-                    'Authorization': `Bearer ${token}`,
+                    Authorization: `Bearer ${token}`,
                 },
                 body: formData,
             });
 
             const data = await response.json();
             console.log(data);
-            
+
             if (response.ok) {
-                setSuccess('Post created successfully!');
-                setTitle('');
-                setContent(''); 
+                setSuccess("Post created successfully!");
+                setTitle("");
+                setContent("");
                 setFile(null);
-                setCodeSnippet('');
+                setCodeSnippet("");
+                setLanguage("");
                 setError(null);
                 setTimeout(() => {
-                    navigate('/profile');
+                    navigate("/profile");
                 }, 1000);
             } else {
-                setError(data.message || 'Failed to create post.');
+                setError(data.message || "Failed to create post.");
                 if (response.status === 401) {
                     logout();
                 }
             }
         } catch (error) {
-            console.error('Error creating post:', error);
-            setError('Failed to create post. Please try again.');
+            console.error("Error creating post:", error);
+            setError("Failed to create post. Please try again.");
         }
     };
 
     return (
         <div className="max-w-3xl mx-auto py-10 px-6 bg-white rounded-lg shadow-md">
-            <h2 className="text-3xl font-bold text-gray-800 mb-4">Create a New Post</h2>
+            <h2 className="text-3xl font-bold text-gray-800 mb-4">
+                Create a New Post
+            </h2>
             {error && <p className="text-red-500 mb-4">{error}</p>}
             {success && <p className="text-green-500 mb-4">{success}</p>}
 
             <div className="mb-4">
-                <label className="block text-gray-700 mb-2 font-semibold">Title:</label>
+                <label className="block text-gray-700 mb-2 font-semibold">
+                    Title:
+                </label>
                 <input
                     type="text"
                     placeholder="Enter a title for your post..."
@@ -107,8 +116,39 @@ const CreatePost = () => {
                 className="w-full p-4 border rounded mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
 
+            {/* Select Language */}
             <div className="mb-4">
-                <label className="block text-gray-700 mb-2 font-semibold">Paste Code Snippet:</label>
+                <label className="block text-gray-700 mb-2 font-semibold">
+                    Select Language (for Code Snippet):
+                </label>
+                <select
+                    value={language}
+                    onChange={(e) => setLanguage(e.target.value)}
+                    className="w-full p-2 border rounded mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                    <option value="">-- Select Language --</option>
+                    <option value="txt">Plain Text</option>
+                    <option value="c">C</option>
+                    <option value="cpp">C++</option>
+                    <option value="java">Java</option>
+                    <option value="python">Python</option>
+                    <option value="javascript">JavaScript</option>
+                    <option value="html">HTML</option>
+                    <option value="css">CSS</option>
+                    <option value="json">JSON</option>
+                    <option value="xml">XML</option>
+                    <option value="ruby">Ruby</option>
+                    <option value="php">PHP</option>
+                    <option value="go">Go</option>
+                    <option value="swift">Swift</option>
+                </select>
+            </div>
+
+            {/* Paste Code Snippet */}
+            <div className="mb-4">
+                <label className="block text-gray-700 mb-2 font-semibold">
+                    Paste Code Snippet:
+                </label>
                 <textarea
                     placeholder="Paste your code snippet here..."
                     value={codeSnippet}
@@ -118,8 +158,11 @@ const CreatePost = () => {
                 />
             </div>
 
+            {/* Upload a File */}
             <div className="mb-4">
-                <label className="block text-gray-700 mb-2 font-semibold">Upload a File:</label>
+                <label className="block text-gray-700 mb-2 font-semibold">
+                    Upload a File:
+                </label>
                 <input
                     type="file"
                     onChange={handleFileChange}
