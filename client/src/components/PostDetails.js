@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Clock, User, FileText, Code } from 'lucide-react';
 
 const PostDetails = ({ post }) => {
     const [fileContent, setFileContent] = useState(null);
@@ -44,7 +45,7 @@ const PostDetails = ({ post }) => {
             try {
                 const response = await fetch(
                     `http://localhost:8001/api/auth/${post.author_id}`
-                ); // Update endpoint based on your backend route
+                );
                 if (!response.ok) {
                     throw new Error("Failed to fetch author details");
                 }
@@ -66,45 +67,52 @@ const PostDetails = ({ post }) => {
     };
 
     return (
-        <div className="bg-white p-8 rounded-xl shadow-md mb-8 border border-gray-500 hover:shadow-lg transition-shadow">
+        <div className="relative bg-gradient-to-br from-white via-blue-50 to-white p-8 rounded-3xl shadow-2xl mb-8 border-2 border-blue-100 overflow-hidden transition-all duration-300 ease-in-out hover:shadow-3xl">
+            {/* Decorative Gradient Overlay */}
+            <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 opacity-80"></div>
+
             {/* Post Header */}
-            <div className="flex justify-between items-center border-b pb-4 mb-6">
+            <div className="flex justify-between items-center border-b border-blue-200 pb-6 mb-6 relative">
                 <div>
-                    <h4 className="text-3xl font-extrabold text-gray-900 mb-2">
+                    <h4 className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 mb-3 tracking-tight font-['Inter'] drop-shadow-sm">
                         {post.title || "Untitled Post"}
                     </h4>
-                    <p className="text-sm text-gray-600">
-                        Post Author:{" "}
-                        <span className="text-blue-600 font-medium">
-                            {authorEmail}
-                        </span>
-                    </p>
-                    <p className="text-sm text-gray-600">
-                        Published on:{" "}
-                        <span className="text-sm text-gray-500 italic">
-                        {new Date(post.createdAt).toLocaleString("en-US", {
-                            weekday: "long",
-                            year: "numeric",
-                            month: "long",
-                            day: "numeric",
-                            hour: "2-digit",
-                            minute: "2-digit",
-                        })}
-                        </span>
-                    </p>
+                    <div className="flex items-center space-x-3 mb-2">
+                        <User className="w-5 h-5 text-blue-600" />
+                        <p className="text-sm text-gray-600 font-['Inter']">
+                            Post Author:{" "}
+                            <span className="text-blue-700 font-semibold tracking-wide">
+                                {authorEmail}
+                            </span>
+                        </p>
+                    </div>
+                    <div className="flex items-center space-x-3">
+                        <Clock className="w-5 h-5 text-blue-600" />
+                        <p className="text-sm text-gray-500 italic font-['Roboto'] opacity-80">
+                            {new Date(post.createdAt).toLocaleString("en-US", {
+                                weekday: "long",
+                                year: "numeric",
+                                month: "long",
+                                day: "numeric",
+                                hour: "2-digit",
+                                minute: "2-digit",
+                            })}
+                        </p>
+                    </div>
                 </div>
-                <div className="rounded-full bg-blue-100 text-blue-700 px-4 py-1 text-sm font-bold">
+                <div className="rounded-full bg-blue-100 text-blue-800 px-5 py-2 text-sm font-bold font-['Inter'] shadow-md transform hover:scale-105 transition-transform">
                     {post.file_type ? post.file_type.toUpperCase() : "OTHER"}
                 </div>
             </div>
 
             {/* Post Content */}
             {post.content && (
-                <div className="mb-6">
-                    <h5 className="text-lg font-bold text-gray-800 mb-2">
-                        Post Content:
+                <div className="mb-6 group">
+                    <h5 className="text-xl font-bold text-gray-900 mb-3 font-['Inter'] border-l-4 border-blue-500 pl-3 flex items-center">
+                        <FileText className="w-6 h-6 mr-3 text-blue-600" />
+                        Post Content
                     </h5>
-                    <div className="bg-gray-50 p-4 rounded-lg border border-gray-200 text-gray-700 leading-relaxed font-sans">
+                    <div className="bg-white p-6 rounded-xl border border-blue-100 text-gray-700 leading-relaxed font-['Roboto'] shadow-inner hover:shadow-lg transition-shadow">
                         {post.content}
                     </div>
                 </div>
@@ -112,15 +120,19 @@ const PostDetails = ({ post }) => {
 
             {/* Code Snippet Section */}
             {codeSnippetContent && (
-                <div className="bg-gray-50 p-6 rounded-lg mb-6 border border-gray-200">
-                    <h5 className="text-lg font-bold text-gray-800 mb-2">
-                        Code Snippet:
+                <div className="bg-white p-6 rounded-xl mb-6 border border-blue-100 shadow-md hover:shadow-xl transition-shadow">
+                    <h5 className="text-xl font-bold text-gray-900 mb-3 font-['Inter'] border-l-4 border-green-500 pl-3 flex items-center">
+                        <Code className="w-6 h-6 mr-3 text-green-600" />
+                        Code Snippet
                     </h5>
                     <pre
-                        className={`bg-gray-100 p-4 rounded-lg overflow-auto text-sm font-mono text-gray-800 ${
-                            isSnippetExpanded ? "" : "max-h-200"
+                        className={`bg-gray-50 p-5 rounded-lg overflow-auto text-sm font-['Fira Code'] text-gray-800 border border-gray-200 relative ${
+                            isSnippetExpanded ? "" : "max-h-64"
                         }`}
                     >
+                        {!isSnippetExpanded && (
+                            <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-gray-50 to-transparent"></div>
+                        )}
                         <code>
                             {isSnippetExpanded
                                 ? codeSnippetContent
@@ -129,33 +141,43 @@ const PostDetails = ({ post }) => {
                     </pre>
                     <button
                         onClick={() => setIsSnippetExpanded(!isSnippetExpanded)}
-                        className="mt-3 text-blue-600 font-medium hover:underline"
+                        className="mt-4 px-4 py-2 bg-blue-50 text-blue-700 rounded-full hover:bg-blue-100 transition-colors font-['Inter'] flex items-center justify-center space-x-2 group"
                     >
-                        {isSnippetExpanded ? "Collapse" : "Expand"}
+                        <span>{isSnippetExpanded ? "Collapse" : "Expand"}</span>
+                        <span className="opacity-0 group-hover:opacity-100 transition-opacity ml-2">
+                            {isSnippetExpanded ? "▲" : "▼"}
+                        </span>
                     </button>
                 </div>
             )}
 
             {/* File Content Section */}
             {fileContent && (
-                <div className="bg-gray-50 p-6 rounded-lg mb-6 border border-gray-200">
-                    <h5 className="text-lg font-bold text-gray-800 mb-2">
-                        File Content:
+                <div className="bg-white p-6 rounded-xl mb-6 border border-blue-100 shadow-md hover:shadow-xl transition-shadow">
+                    <h5 className="text-xl font-bold text-gray-900 mb-3 font-['Inter'] border-l-4 border-purple-500 pl-3 flex items-center">
+                        <FileText className="w-6 h-6 mr-3 text-purple-600" />
+                        File Content
                     </h5>
                     <pre
-                        className={`bg-gray-100 p-4 rounded-lg overflow-auto text-sm font-mono text-gray-800 ${
-                            isFileExpanded ? "" : "max-h-200"
+                        className={`bg-gray-50 p-5 rounded-lg overflow-auto text-sm font-['Fira Code'] text-gray-800 border border-gray-200 relative ${
+                            isFileExpanded ? "" : "max-h-64"
                         }`}
                     >
+                        {!isFileExpanded && (
+                            <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-gray-50 to-transparent"></div>
+                        )}
                         <code>
                             {isFileExpanded ? fileContent : limitContent(fileContent)}
                         </code>
                     </pre>
                     <button
                         onClick={() => setIsFileExpanded(!isFileExpanded)}
-                        className="mt-3 text-blue-600 font-medium hover:underline"
+                        className="mt-4 px-4 py-2 bg-blue-50 text-blue-700 rounded-full hover:bg-blue-100 transition-colors font-['Inter'] flex items-center justify-center space-x-2 group"
                     >
-                        {isFileExpanded ? "Collapse" : "Expand"}
+                        <span>{isFileExpanded ? "Collapse" : "Expand"}</span>
+                        <span className="opacity-0 group-hover:opacity-100 transition-opacity ml-2">
+                            {isFileExpanded ? "▲" : "▼"}
+                        </span>
                     </button>
                 </div>
             )}

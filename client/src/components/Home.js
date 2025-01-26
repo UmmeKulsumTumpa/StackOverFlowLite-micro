@@ -1,8 +1,8 @@
-// Home.js
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { AuthContext } from './AuthContext';
 import PostDetails from './PostDetails';
+import { FaExclamationTriangle } from 'react-icons/fa';
 
 const Home = () => {
     const { isAuthenticated, user } = React.useContext(AuthContext);
@@ -12,7 +12,6 @@ const Home = () => {
     useEffect(() => {
         const fetchPosts = async () => {
             try {
-                // Construct the API URL with the excludeUserId query parameter if the user is authenticated
                 const url = isAuthenticated
                     ? `http://localhost:8002/api/posts?excludeUserId=${user._id}`
                     : 'http://localhost:8002/api/posts';
@@ -44,15 +43,34 @@ const Home = () => {
     
 
     return (
-        <div className="max-w-5xl mx-auto py-10 px-4">
-            <h2 className="text-3xl font-bold mb-8 text-center">Recent Posts</h2>
-            {error && <p className="text-red-500">{error}</p>}
+        <div className="max-w-6xl mx-auto py-10 px-4 bg-gray-50 min-h-screen">
+            <div className="text-center mb-12 bg-white p-6 rounded-xl shadow-md">
+                <h2 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 mb-4">
+                    Recent Posts
+                </h2>
+                <p className="text-gray-600 max-w-2xl mx-auto">
+                    Explore the latest discussions and insights from our community
+                </p>
+            </div>
+
+            {error && (
+                <div className="bg-red-50 border border-red-200 text-red-800 p-4 rounded-lg flex items-center justify-center mb-8">
+                    <FaExclamationTriangle className="mr-4 text-2xl text-red-500" />
+                    <p className="font-medium">{error}</p>
+                </div>
+            )}
+
             {posts.length > 0 ? (
-                posts.map((post) => (
-                    <PostDetails key={post._id} post={post} />
-                ))
+                <div className="space-y-8">
+                    {posts.map((post) => (
+                        <PostDetails key={post._id} post={post} />
+                    ))}
+                </div>
             ) : (
-                <p className="text-gray-600 text-center">No posts available</p>
+                <div className="text-center bg-white p-8 rounded-xl shadow-md">
+                    <p className="text-gray-600 text-xl">No posts available</p>
+                    <p className="text-gray-500 mt-2">Check back later or create a new post!</p>
+                </div>
             )}
         </div>
     );
