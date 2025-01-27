@@ -29,7 +29,7 @@ exports.getUserNotifications = async (req, res) => {
                             },
                         }
                     );
-                    console.log("Post response:", postResponse.data);
+                    // console.log("Post response:", postResponse.data);
                     
 
                     return {

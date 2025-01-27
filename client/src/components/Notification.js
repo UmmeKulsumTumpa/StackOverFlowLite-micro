@@ -20,7 +20,7 @@ const Notifications = () => {
                 }
             });
             const data = await response.json();
-            console.log(data);
+            // console.log(data);
             
             if (response.ok) {
                 setNotifications(data.notifications);
@@ -71,7 +71,7 @@ const Notifications = () => {
                         </p>
                         {notification.postId && (
                             <div className="mt-4">
-                                <PostDetails post={notification.postId} />
+                                <PostDetails post={notification.postDetails} />
                                 <button
                                     onClick={() => markAsSeen(notification._id)}
                                     className="mt-4 px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600"
