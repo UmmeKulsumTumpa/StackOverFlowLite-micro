@@ -93,7 +93,7 @@ exports.createPost = async (req, res) => {
             code_snippet_url: codeSnippetUrl,
         });
 
-        console.log("New Post:", newPost);
+        // console.log("New Post:", newPost);
 
         // Save the post to the database
         await newPost.save();
@@ -102,7 +102,7 @@ exports.createPost = async (req, res) => {
         try {
             const notificationMessage = `A new post titled "${newPost.title}" has been created.`;
             await axios.post(
-                `http://notification-service:8003/api/notifications`,
+                `http://localhost:8003/api/notifications`,
                 { postId: newPost._id, message: notificationMessage },
                 {
                     headers: {
@@ -129,7 +129,7 @@ exports.createPost = async (req, res) => {
 exports.getUserPosts = async (req, res) => {
     try {
         const { userId } = req.params;
-
+        
         // Find posts by user ID
         const userPosts = await Post.find({ author_id: userId }).sort({
             createdAt: -1,
@@ -139,5 +139,21 @@ exports.getUserPosts = async (req, res) => {
     } catch (err) {
         console.error("Error fetching user posts:", err);
         res.status(500).json({ error: "Server error" });
+    }
+};
+
+exports.getPostById = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const post = await Post.findById(id);
+        if (!post) {
+            return res.status(404).json({ message: "Post not found" });
+        }
+        // console.log("Post:", post);
+        
+        res.status(200).json({ post });
+    } catch (error) {
+        console.error("Error fetching post by ID:", error);
+        res.status(500).json({ message: "Server error." });
     }
 };

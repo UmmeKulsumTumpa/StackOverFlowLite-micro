@@ -1,5 +1,6 @@
 const express = require('express');
-const { signup, signin } = require('../controllers/authController');
+const { signup, signin, getUserEmail, getAllUsers } = require('../controllers/authController');
+const verifyToken = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
@@ -8,5 +9,11 @@ router.post('/signup', signup);
 
 // User signin route
 router.post('/signin', signin);
+
+// Route to get user email by ID
+router.get('/:id', getUserEmail);
+
+// Route to get all users
+router.get("/", verifyToken, getAllUsers);
 
 module.exports = router;

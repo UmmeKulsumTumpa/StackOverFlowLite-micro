@@ -18,12 +18,4 @@ const verifyToken = (req, res, next) => {
     });
 };
 
-const validateApiKey = (req, res, next) => {
-    const apiKey = req.headers["x-api-key"];
-    if (!apiKey || apiKey !== process.env.POST_SERVICE_API_KEY) {
-        return res.status(403).json({ message: "Forbidden: Invalid API key" });
-    }
-    next();
-};
-
-module.exports = {verifyToken, validateApiKey};
+module.exports = verifyToken;

@@ -47,3 +47,31 @@ exports.signin = async (req, res) => {
         res.status(500).json({ message: 'Server error.' });
     }
 };
+
+exports.getUserEmail = async (req, res) => {
+    try {
+        const { id } = req.params; // Extract user ID from route parameters
+
+        // Find user by ID
+        const user = await User.findById(id);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found.' });
+        }
+
+        res.status(200).json({ email: user.email });
+    } catch (error) {
+        console.error('Error fetching user email:', error);
+        res.status(500).json({ message: 'Server error.' });
+    }
+};
+
+// Get all users
+exports.getAllUsers = async (req, res) => {
+    try {
+        const users = await User.find().select("_id email"); // Fetch all users with only necessary fields
+        res.status(200).json({ success: true, users });
+    } catch (error) {
+        console.error("Error fetching users:", error);
+        res.status(500).json({ message: "Server error." });
+    }
+};
