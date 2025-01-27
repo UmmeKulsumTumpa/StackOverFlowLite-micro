@@ -16,7 +16,7 @@ const Navbar = () => {
 
     const fetchUnseenNotifications = async () => {
         try {
-            const response = await fetch('http://localhost:8000/notifications', {
+            const response = await fetch('http://localhost:8003/api/notifications', {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}`,

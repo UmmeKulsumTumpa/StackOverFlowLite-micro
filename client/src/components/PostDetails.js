@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
+import { AuthContext } from "./AuthContext";
 import { Clock, User, FileText, Code } from 'lucide-react';
 
 const PostDetails = ({ post }) => {
+    const { token } = useContext(AuthContext);
     const [fileContent, setFileContent] = useState(null);
     const [codeSnippetContent, setCodeSnippetContent] = useState(null);
     const [authorEmail, setAuthorEmail] = useState("Loading...");
@@ -43,9 +45,19 @@ const PostDetails = ({ post }) => {
 
         const fetchAuthorEmail = async () => {
             try {
+                // console.log(post);
+                
                 const response = await fetch(
-                    `http://localhost:8001/api/auth/${post.author_id}`
+                    `http://localhost:8001/api/auth/${post.author_id}`,
+                    {
+                        method: "GET",
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                            "Content-Type": "application/json",
+                        },
+                    }
                 );
+
                 if (!response.ok) {
                     throw new Error("Failed to fetch author details");
                 }

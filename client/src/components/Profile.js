@@ -14,7 +14,7 @@ const Profile = () => {
         const fetchUserPosts = async () => {
             if (user && user._id) {
                 try {
-                    const response = await fetch(`http://localhost:8002/api/posts/${user._id}`, {
+                    const response = await fetch(`http://localhost:8002/api/posts/user/${user._id}`, {
                         method: 'GET',
                         headers: {
                             'Authorization': `Bearer ${token}`,

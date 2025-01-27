@@ -8,7 +8,7 @@ const Footer = () => {
                 <div className="flex flex-col items-center space-y-4">
                     <div className="flex items-center space-x-2 text-lg font-medium">
                         <FaCopyright className="text-gray-400" />
-                        <span>2024 Stack Overflow Lite. All rights reserved.</span>
+                        <span>2025 Stack Overflow Lite. All rights reserved.</span>
                     </div>
                     <div className="flex items-center space-x-2 text-gray-300 hover:text-white transition duration-300">
                         <FaEnvelope className="mr-2" />
@@ -21,7 +21,7 @@ const Footer = () => {
                     </div>
                     <div className="flex space-x-4 text-2xl">
                         <a 
-                            href="https://github.com/your-github-profile" 
+                            href="https://github.com/UmmeKulsumTumpa/StackOverFlowLite-micro" 
                             target="_blank" 
                             rel="noopener noreferrer" 
                             className="text-gray-400 hover:text-white transition duration-300 hover:scale-110"

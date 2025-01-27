@@ -12,7 +12,7 @@ const Notifications = () => {
 
     const fetchNotifications = async () => {
         try {
-            const response = await fetch('http://localhost:8000/notifications', {
+            const response = await fetch('http://localhost:8003/api/notifications', {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -20,6 +20,8 @@ const Notifications = () => {
                 }
             });
             const data = await response.json();
+            console.log(data);
+            
             if (response.ok) {
                 setNotifications(data.notifications);
             } else {
@@ -32,7 +34,7 @@ const Notifications = () => {
 
     const markAsSeen = async (notificationId) => {
         try {
-            await fetch(`http://localhost:8000/notifications/${notificationId}/markAsSeen`, {
+            await fetch(`http://localhost:8003/api/notifications/${notificationId}/markAsSeen`, {
                 method: 'PUT',
                 headers: {
                     'Authorization': `Bearer ${token}`,
