@@ -2,24 +2,20 @@ const mongoose = require("mongoose");
 
 const notificationSchema = new mongoose.Schema(
     {
-        recipient: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "User",
-            required: true,
-        },
         postId: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Post",
             required: true,
+            unique: true, // Ensure only one notification per post
         },
         message: {
             type: String,
             required: true,
         },
-        isSeen: {
-            type: Boolean,
-            default: false,
-        },
+        seenBy: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+        }], // Users who have seen this notification
         createdAt: {
             type: Date,
             default: Date.now,
