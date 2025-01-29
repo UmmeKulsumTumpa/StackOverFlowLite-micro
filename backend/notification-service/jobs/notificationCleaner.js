@@ -2,7 +2,7 @@ const cron = require('node-cron');
 const Notification = require('../models/Notification');
 
 // Time threshold (e.g., delete notifications older than 7 days)
-const DELETE_THRESHOLD_DAYS = 1;
+const DELETE_THRESHOLD_DAYS = 10;
 const DELETE_THRESHOLD_MS = DELETE_THRESHOLD_DAYS * 60 * 1000;
 
 // Schedule the cleanup job

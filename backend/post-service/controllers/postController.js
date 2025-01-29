@@ -61,7 +61,7 @@ exports.createPost = async (req, res) => {
             );
 
             const protocol = process.env.MINIO_USE_SSL === "true" ? "https" : "http";
-            fileUrl = `${protocol}://${process.env.MINIO_ENDPOINT}:${process.env.MINIO_PORT}/${process.env.MINIO_BUCKET_NAME}/${uniqueFileName}`;
+            fileUrl = `${protocol}://localhost:${process.env.MINIO_PORT}/${process.env.MINIO_BUCKET_NAME}/${uniqueFileName}`;
             fileName = originalName;
         }
 
@@ -79,7 +79,7 @@ exports.createPost = async (req, res) => {
             await minioClient.putObject(process.env.MINIO_BUCKET_NAME, snippetFileName, buffer, metaData);
 
             const protocol = process.env.MINIO_USE_SSL === 'true' ? 'https' : 'http';
-            codeSnippetUrl = `${protocol}://${process.env.MINIO_ENDPOINT}:${process.env.MINIO_PORT}/${process.env.MINIO_BUCKET_NAME}/${snippetFileName}`;
+            codeSnippetUrl = `${protocol}://localhost:${process.env.MINIO_PORT}/${process.env.MINIO_BUCKET_NAME}/${snippetFileName}`;
         }
 
         // Create a new post object
@@ -102,7 +102,7 @@ exports.createPost = async (req, res) => {
         try {
             const notificationMessage = `A new post titled "${newPost.title}" has been created.`;
             await axios.post(
-                `http://localhost:8003/api/notifications`,
+                `http://gateway/api/notifications`,
                 { postId: newPost._id, message: notificationMessage },
                 {
                     headers: {

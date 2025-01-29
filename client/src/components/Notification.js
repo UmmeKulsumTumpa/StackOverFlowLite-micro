@@ -18,7 +18,7 @@ const Notifications = () => {
 
     const fetchNotifications = async () => {
         try {
-            const response = await fetch('http://localhost:8003/api/notifications', {
+            const response = await fetch('http://localhost/api/notifications', {
                 method: 'GET',
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -39,7 +39,7 @@ const Notifications = () => {
 
     const markAsSeen = async (notificationId) => {
         try {
-            const response = await fetch(`http://localhost:8003/api/notifications/${notificationId}/markAsSeen`, {
+            const response = await fetch(`http://localhost/api/notifications/${notificationId}/markAsSeen`, {
                 method: 'PUT',
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -66,7 +66,7 @@ const Notifications = () => {
     const fetchPostDetails = async (postId) => {
         try {
             setLoadingPost(true);
-            const response = await fetch(`http://localhost:8002/api/posts/${postId}`, {
+            const response = await fetch(`http://localhost/api/posts/${postId}`, {
                 method: 'GET',
                 headers: {
                     Authorization: `Bearer ${token}`,

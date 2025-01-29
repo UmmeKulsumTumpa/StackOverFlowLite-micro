@@ -48,7 +48,7 @@ const CreatePost = () => {
         if (codeSnippet) formData.append("codeSnippet", codeSnippet);
 
         try {
-            const response = await fetch("http://localhost:8002/api/posts", {
+            const response = await fetch("http://localhost/api/posts", {
                 method: "POST",
                 headers: { Authorization: `Bearer ${token}` },
                 body: formData,

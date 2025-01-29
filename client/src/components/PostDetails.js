@@ -45,10 +45,10 @@ const PostDetails = ({ post }) => {
 
         const fetchAuthorEmail = async () => {
             try {
-                // console.log(post);
+                console.log(post._id);
                 
                 const response = await fetch(
-                    `http://localhost:8001/api/auth/${post.author_id}`,
+                    `http://localhost/api/auth/${post.author_id}`,
                     {
                         method: "GET",
                         headers: {

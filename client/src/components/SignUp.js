@@ -10,7 +10,7 @@ const SignUp = () => {
 
   const handleSignUp = async () => {
     try {
-      const response = await fetch('http://localhost:8001/api/auth/signup', {
+      const response = await fetch('http://localhost/api/auth/signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

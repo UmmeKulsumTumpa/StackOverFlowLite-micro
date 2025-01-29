@@ -13,8 +13,8 @@ const Home = () => {
         const fetchPosts = async () => {
             try {
                 const url = isAuthenticated
-                    ? `http://localhost:8002/api/posts?excludeUserId=${user._id}`
-                    : 'http://localhost:8002/api/posts';
+                    ? `http://localhost/api/posts?excludeUserId=${user._id}`
+                    : 'http://localhost/api/posts';
     
                 const response = await fetch(url, {
                     method: 'GET',
