@@ -11,12 +11,13 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "axios": "^0.24.0",
+    "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
-    "mongoose": "^8.9.3",
-    "nodemon": "^3.1.9",
     "jsonwebtoken": "^8.5.1",
-    "cors": "^2.8.5",
-    "axios": "^0.24.0"
+    "mongoose": "^8.9.3",
+    "node-cron": "^3.0.3",
+    "nodemon": "^3.1.9"
   }
 }

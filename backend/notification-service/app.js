@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const cors = require('cors');
 const notificationRoutes = require("./routes/notificationRoutes");
+const cleanOldNotifications = require('./jobs/notificationCleaner');
 
 dotenv.config();
 const app = express();
@@ -17,7 +18,11 @@ app.use("/api/notifications", notificationRoutes);
 // Connect to MongoDB
 mongoose
     .connect(process.env.DB, { useNewUrlParser: true, useUnifiedTopology: true })
-    .then(() => console.log("Notification Service: Connected to MongoDB"))
+    .then(() => {
+        console.log("Notification Service: Connected to MongoDB");
+        
+        cleanOldNotifications();
+    })
     .catch((err) => console.error(err));
 
 // Start the server

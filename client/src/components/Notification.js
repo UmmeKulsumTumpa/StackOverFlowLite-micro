@@ -4,7 +4,7 @@ import PostDetails from './PostDetails';
 import { Bell, Check, ChevronDown, ChevronUp, Eye } from 'lucide-react';
 
 const Notifications = () => {
-    const { token } = useContext(AuthContext);
+    const { token, user } = useContext(AuthContext); // Get token and user info
     const [notifications, setNotifications] = useState([]);
     const [expandedNotificationId, setExpandedNotificationId] = useState(null);
     const [postDetails, setPostDetails] = useState({});
@@ -39,7 +39,7 @@ const Notifications = () => {
 
     const markAsSeen = async (notificationId) => {
         try {
-            await fetch(`http://localhost:8003/api/notifications/${notificationId}/markAsSeen`, {
+            const response = await fetch(`http://localhost:8003/api/notifications/${notificationId}/markAsSeen`, {
                 method: 'PUT',
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -47,13 +47,17 @@ const Notifications = () => {
                 },
             });
 
-            setNotifications((prevNotifications) =>
-                prevNotifications.map((notification) =>
-                    notification._id === notificationId
-                        ? { ...notification, isSeen: true }
-                        : notification
-                )
-            );
+            if (response.ok) {
+                setNotifications((prevNotifications) =>
+                    prevNotifications.map((notification) =>
+                        notification._id === notificationId
+                            ? { ...notification, isSeen: true }
+                            : notification
+                    )
+                );
+            } else {
+                console.error('Failed to mark notification as seen');
+            }
         } catch (error) {
             console.error('Error marking notification as seen:', error);
         }
